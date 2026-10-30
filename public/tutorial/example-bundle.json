@@ -1,0 +1,168 @@
+{
+  "format": "rrecall-bundle",
+  "version": 1,
+  "exportedAt": "2026-10-29T09:00:00+09:00",
+  "courses": [
+    {
+      "id": "tutorial-course",
+      "name": "준비 중 예시 · 식물의 에너지",
+      "createdAt": "2026-10-27T10:00:00+09:00"
+    }
+  ],
+  "lectures": [
+    {
+      "id": "tutorial-lecture",
+      "courseId": "tutorial-course",
+      "title": "준비 중 예시: 광합성의 기본 흐름",
+      "date": "2026-10-27T10:00:00+09:00",
+      "transcript": [
+        { "t": 0, "text": "오늘은 식물이 빛을 이용해 에너지를 저장하는 과정을 살펴봅니다." },
+        { "t": 12, "text": "엽록소는 빛 에너지를 흡수합니다." },
+        { "t": 24, "text": "식물은 이산화탄소와 물을 이용해 포도당을 만들고 산소를 내보냅니다." },
+        { "t": 39, "text": "포도당에는 식물이 나중에 사용할 수 있는 화학 에너지가 저장됩니다." }
+      ],
+      "transcriptSource": "튜토리얼용 합성 텍스트",
+      "materialFileIds": [],
+      "note": {
+        "bigPicture": {
+          "question": "식물은 빛 에너지를 어떻게 저장 가능한 에너지로 바꿀까?",
+          "chunks": [
+            { "title": "빛 받기", "gist": "엽록소가 빛 에너지를 흡수해요." },
+            { "title": "물질 만들기", "gist": "이산화탄소와 물로 포도당을 만들어요." },
+            { "title": "에너지 저장", "gist": "포도당에 화학 에너지를 저장해요." }
+          ]
+        },
+        "sections": [
+          {
+            "title": "빛 에너지를 받는 단계",
+            "points": [
+              {
+                "text": "엽록소(chlorophyll)는 빛 에너지를 흡수한다.",
+                "evidence": ["엽록소는 빛 에너지를 흡수합니다."],
+                "verified": true
+              }
+            ],
+            "myHandwriting": []
+          },
+          {
+            "title": "포도당을 만드는 단계",
+            "points": [
+              {
+                "text": "식물은 이산화탄소와 물을 이용해 포도당을 만들고 산소를 내보낸다.",
+                "evidence": ["식물은 이산화탄소와 물을 이용해 포도당을 만들고 산소를 내보냅니다."],
+                "verified": true
+              },
+              {
+                "text": "만들어진 포도당에는 화학 에너지가 저장된다.",
+                "evidence": ["포도당에는 식물이 나중에 사용할 수 있는 화학 에너지가 저장됩니다."],
+                "verified": true
+              }
+            ],
+            "myHandwriting": [
+              { "text": "빛 → 포도당", "where": "오른쪽 여백", "meaning": "빛 에너지가 저장 가능한 형태로 바뀐다는 메모" }
+            ]
+          }
+        ],
+        "model": "tutorial-synthetic",
+        "promptVersion": "tutorial-placeholder-1",
+        "createdAt": "2026-10-27T10:20:00+09:00"
+      },
+      "skeleton": {
+        "bundles": [
+          {
+            "title": "빛을 받아 에너지를 저장하기",
+            "wordBank": ["chlorophyll", "carbon dioxide", "glucose"],
+            "blanks": [
+              { "sentence": "빛 에너지를 흡수하는 색소는 ___이다.", "answer": "chlorophyll" },
+              { "sentence": "식물은 물과 ___를 이용해 포도당을 만든다.", "answer": "carbon dioxide" },
+              { "sentence": "화학 에너지는 주로 ___에 저장된다.", "answer": "glucose" }
+            ]
+          }
+        ],
+        "examples": ["빛 에너지가 식물 안에서 저장되는 흐름을 화살표로 그려 보세요."],
+        "weakFromCourse": [],
+        "leakWarnings": [],
+        "model": "tutorial-synthetic",
+        "promptVersion": "tutorial-placeholder-1",
+        "createdAt": "2026-10-27T10:21:00+09:00"
+      },
+      "recalls": [
+        {
+          "id": "tutorial-recall",
+          "date": "2026-10-28T09:00:00+09:00",
+          "photoFileIds": [],
+          "typedText": "엽록소가 빛을 받는다. 물과 이산화탄소를 이용한다. 포도당에 에너지가 저장된다.",
+          "reading": {
+            "recalled": [
+              { "text": "엽록소가 빛을 받는다.", "concept": "엽록소" },
+              { "text": "포도당에 에너지가 저장된다.", "concept": "포도당" }
+            ],
+            "corrected": [
+              { "text": "이산화탄소와 물을 이용한다.", "concept": "광합성 재료" }
+            ],
+            "gaps": [
+              {
+                "id": "gap-materials",
+                "concept": "광합성의 재료",
+                "why": "빨간 펜으로 고친 내용",
+                "noteSection": "포도당을 만드는 단계",
+                "uncertain": false
+              },
+              {
+                "id": "gap-oxygen",
+                "concept": "산소가 나오는 과정",
+                "why": "사진에서 적힌 내용을 찾지 못함",
+                "noteSection": "포도당을 만드는 단계",
+                "uncertain": true
+              }
+            ],
+            "model": "tutorial-synthetic",
+            "promptVersion": "tutorial-placeholder-1",
+            "createdAt": "2026-10-28T09:10:00+09:00"
+          },
+          "confirmedGapIds": ["gap-materials"],
+          "confirmedAt": "2026-10-28T09:12:00+09:00"
+        }
+      ]
+    }
+  ],
+  "weakPoints": [
+    {
+      "id": "tutorial-weak-materials",
+      "courseId": "tutorial-course",
+      "lectureId": "tutorial-lecture",
+      "concept": "광합성의 재료",
+      "detail": "이산화탄소와 물을 이용한다는 내용을 빨간 펜으로 보충함",
+      "createdAt": "2026-10-28T09:12:00+09:00",
+      "reviews": [
+        { "date": "2026-10-29T09:00:00+09:00", "correct": true, "questionId": "tutorial-question" }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "tutorial-question",
+      "weakPointId": "tutorial-weak-materials",
+      "kind": "short",
+      "prompt": "식물이 포도당을 만들 때 이용하는 두 가지 재료는 무엇인가요?",
+      "answer": "이산화탄소와 물",
+      "evidence": "식물은 이산화탄소와 물을 이용해 포도당을 만들고 산소를 내보낸다."
+    }
+  ],
+  "chats": [
+    {
+      "id": "tutorial-chat-before",
+      "courseId": "tutorial-course",
+      "lectureId": "tutorial-lecture",
+      "purpose": "before-recall",
+      "messages": [
+        { "role": "user", "text": "엽록소는 왜 필요한가요?", "at": "2026-10-27T10:25:00+09:00" },
+        { "role": "assistant", "text": "엽록소는 빛 에너지를 흡수해요. 이 강의에서는 그 에너지가 포도당에 화학 에너지로 저장되는 흐름을 중심으로 보면 돼요.", "at": "2026-10-27T10:25:10+09:00" }
+      ]
+    }
+  ],
+  "files": [],
+  "usage": [],
+  "attribution": "준비 중 예시 · 실제 강의나 교재를 옮기지 않은 rRecall 제작 합성 자료",
+  "simulatedDates": true
+}
