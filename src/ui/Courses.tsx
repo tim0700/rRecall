@@ -305,7 +305,10 @@ export function TranscriptGuide() {
 }
 export function NewLecture({ courseId }: { courseId: string }) {
   const [step, setStep] = useState(0);
-  useEffect(() => window.scrollTo(0, 0), [step]);
+  useEffect(() => {
+    // Block body on purpose: Chrome's scrollTo returns a Promise, which React would call as a cleanup.
+    window.scrollTo(0, 0);
+  }, [step]);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [fileName, setFileName] = useState('transcript.txt');

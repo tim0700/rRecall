@@ -195,6 +195,7 @@ export function SettingsPage({ onKeyChange }: { onKeyChange: () => void }) {
   const [settings, setSettings] = useState<Settings>(store.readSettings);
   const task = useTask();
   const [pending, setPending] = useState<ReturnType<typeof api.decodeBundle>>();
+  const [importError, setImportError] = useState('');
   const presets = presetList();
   function change(next: Settings) {
     void task.run(async () => {
@@ -320,12 +321,28 @@ export function SettingsPage({ onKeyChange }: { onKeyChange: () => void }) {
               if (file)
                 void task.run(async () => {
                   setPending(undefined);
-                  setPending(api.decodeBundle(JSON.parse(await file.text())));
+                  setImportError('');
+                  try {
+                    setPending(api.decodeBundle(JSON.parse(await file.text())));
+                  } catch (err) {
+                    // decodeBundle throws Korean messages; anything else means it is not our backup file.
+                    const message = err instanceof Error ? err.message : '';
+                    setImportError(
+                      /[가-힣]/.test(message)
+                        ? message
+                        : 'rRecall 백업 파일이 아니에요. 설정에서 내려받은 .json 파일을 넣어 주세요.',
+                    );
+                  }
                 });
               e.target.value = '';
             }}
           />
         </label>
+        {importError && (
+          <p role="alert" className="error">
+            {importError}
+          </p>
+        )}
         {pending && (
           <aside className="notice">
             <p>

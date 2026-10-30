@@ -183,7 +183,6 @@ export function Confirmation({
               };
               await store.save({ lectures: [updated], weakPoints: points });
               onSave(updated);
-              task.setMessage('선택한 약점을 저장했어요.');
             })
           }
         >
@@ -323,15 +322,17 @@ export function RecallPanel({
           />
         </label>
       )}
-      {level === 2 && mode === 'text' && definitionDrafts.length > 0 && (
+      {level === 2 && definitionDrafts.length > 0 && (
         <button
-          onClick={() =>
+          onClick={() => {
+            const lines = definitionDrafts.map(([term, text]) => `${term} — ${text.trim()}`);
             setTyped(
-              [typed.trim(), ...definitionDrafts.map(([term, text]) => `${term} — ${text.trim()}`)]
-                .filter(Boolean)
-                .join('\n'),
-            )
-          }
+              (typed.trim() ? [typed.trim(), ...lines] : ['[스스로 떠올림]', ...lines]).join('\n'),
+            );
+            setMode('text');
+            // Imported once; the button disappears so the lines are not appended twice.
+            writeDraft(`${lecture.id}.l2`, undefined);
+          }}
         >
           뼈대에 쓴 뜻 {definitionDrafts.length}개 가져오기
         </button>
