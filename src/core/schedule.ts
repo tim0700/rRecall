@@ -13,7 +13,13 @@ export function newId(): string {
 }
 const localDay = (date: Date): string =>
   `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-const day = 24 * 60 * 60 * 1000;
+/** Local midnight `days` calendar days after `from`: "3 days later" means that whole day, not 72 hours. */
+const dayStart = (from: number, days: number): number => {
+  const date = new Date(from);
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + days);
+  return date.getTime();
+};
 
 /** Due tasks only. Legacy recalls are level 1; manual level 3 has no automatic follow-up. */
 export function lectureReviewTasks(lectures: Lecture[], now: Date): LectureReviewTask[] {
@@ -24,7 +30,7 @@ export function lectureReviewTasks(lectures: Lecture[], now: Date): LectureRevie
         .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))[0];
       if (last?.level === 3) return [];
       const interval = last ? ((last.level ?? 1) === 1 ? 3 : 14) : 0;
-      const due = Date.parse(last?.date ?? lecture.date) + interval * day;
+      const due = dayStart(Date.parse(last?.date ?? lecture.date), interval);
       if (!Number.isFinite(due) || due > now.getTime() || !Number.isFinite(now.getTime()))
         return [];
       return [
@@ -100,16 +106,24 @@ export interface ReviewOptions {
 /** When the weak point next becomes due; undefined once its retention check is done. */
 export function nextReviewAt(wp: WeakPoint): Date | undefined {
   if (wp.resolvedAt)
-    return wp.retainedAt ? undefined : new Date(Date.parse(wp.resolvedAt) + 21 * day);
+    return wp.retainedAt ? undefined : new Date(dayStart(Date.parse(wp.resolvedAt), 21));
   const reviews = countedReviews(wp);
+  // The streak counts correct days, not answers: two right answers on one day are one step.
   let streak = 0;
+  let lastCorrectDay = '';
   for (const review of reviews) {
-    if (!review.correct) streak = 0;
-    else if (!review.hinted) streak += 1;
+    if (!review.correct) {
+      streak = 0;
+      lastCorrectDay = '';
+    } else if (!review.hinted) {
+      const date = localDay(new Date(review.date));
+      if (date !== lastCorrectDay) streak += 1;
+      lastCorrectDay = date;
+    }
   }
   const last = Math.max(Date.parse(wp.createdAt), Date.parse(reviews.at(-1)?.date ?? wp.createdAt));
   const days = streak === 0 ? 1 : streak === 1 ? 3 : 7;
-  return new Date(last + days * day);
+  return new Date(dayStart(last, days));
 }
 export function dueWeakPoints(all: WeakPoint[], now: Date): WeakPoint[] {
   return all.filter((wp) => {
@@ -128,7 +142,7 @@ export function applyReview(
     !options.practice &&
     wp.resolvedAt &&
     !wp.retainedAt &&
-    now.getTime() - Date.parse(wp.resolvedAt) >= 21 * day,
+    now.getTime() >= dayStart(Date.parse(wp.resolvedAt), 21),
   );
   const reviews = [
     ...wp.reviews,

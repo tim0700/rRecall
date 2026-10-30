@@ -177,16 +177,14 @@ it.each([undefined, false, 'invalid'])(
 it.each([2, 3] as const)('ignores missing-meaning flag outside level 1 (%s)', async (level) => {
   vi.stubGlobal(
     'fetch',
-    vi
-      .fn()
-      .mockResolvedValue(
-        geminiResponse({
-          recalled: [],
-          corrected: [],
-          gaps: [gap('concept')],
-          meaningLinesMissing: true,
-        }),
-      ),
+    vi.fn().mockResolvedValue(
+      geminiResponse({
+        recalled: [],
+        corrected: [],
+        gaps: [gap('concept')],
+        meaningLinesMissing: true,
+      }),
+    ),
   );
   const result = await readRecall({
     photos: [],
@@ -199,17 +197,15 @@ it.each([2, 3] as const)('ignores missing-meaning flag outside level 1 (%s)', as
   expect(result.value.gaps).toHaveLength(1);
 });
 it('grades an incorrect empty-reference follow-up once using note evidence', async () => {
-  const fetcher = vi
-    .fn()
-    .mockResolvedValue(
-      claudeResponse({
-        correct: false,
-        feedback: '다시 생각해 보세요.',
-        missing: [],
-        hint: '구성에 주목해 보세요.',
-        followUp: '',
-      }),
-    );
+  const fetcher = vi.fn().mockResolvedValue(
+    claudeResponse({
+      correct: false,
+      feedback: '다시 생각해 보세요.',
+      missing: [],
+      hint: '구성에 주목해 보세요.',
+      followUp: '',
+    }),
+  );
   vi.stubGlobal('fetch', fetcher);
   const result = await gradeAnswer({
     question: {

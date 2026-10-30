@@ -1,4 +1,4 @@
-import { Component, useEffect, useState, type ReactNode } from 'react';
+import { Component, useEffect, useRef, useState, type ReactNode } from 'react';
 import * as api from './core/api';
 import { Home, CoursePage, NewLecture } from './ui/Courses';
 import { Setup, SettingsPage } from './ui/Settings';
@@ -61,6 +61,18 @@ export default function App() {
   const [credits, setCredits] = useState<api.CreditInfo>();
   const task = useTask();
   const tutorial = path.startsWith('/tutorial');
+  const header = useRef<HTMLElement>(null);
+  useEffect(() => {
+    // Sticky lecture tabs sit right under the sticky header, whose height changes with width.
+    const el = header.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const sync = () =>
+      document.documentElement.style.setProperty('--header-height', `${el.offsetHeight}px`);
+    const observer = new ResizeObserver(sync);
+    observer.observe(el);
+    sync();
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
     const update = () => {
       setPath(window.location.hash.slice(1) || '/');
@@ -72,10 +84,15 @@ export default function App() {
   // Tutorial never sends even a credit request.
   const connected = hasKey();
   useEffect(() => {
-    if (!tutorial && connected)
-      void task.run(async () => {
-        setCredits(await api.getCredits());
-      });
+    // Quiet balance check: a failure must not put an error banner on every screen.
+    if (!tutorial && connected) void api.getCredits().then(setCredits, () => undefined);
+  }, [tutorial, connected, keyVersion]);
+  useEffect(() => {
+    if (tutorial || !connected) return;
+    // Refresh the header balance quietly after any paid call.
+    const refresh = () => void api.getCredits().then(setCredits, () => undefined);
+    window.addEventListener('rrecall:usage', refresh);
+    return () => window.removeEventListener('rrecall:usage', refresh);
   }, [tutorial, connected, keyVersion]);
   function changed() {
     setKeyVersion((v) => v + 1);
@@ -93,7 +110,7 @@ export default function App() {
       >
         본문으로 이동
       </a>
-      <header className="app-header">
+      <header className="app-header" ref={header}>
         <a className="brand" href="#/">
           rRecall<span>기록에서 기억까지</span>
         </a>

@@ -141,6 +141,9 @@ export function matchesSchema(value: unknown, schema: Schema): boolean {
 export function coerceToSchema(value: unknown, schema: Schema): unknown {
   if (schema.type === 'object') {
     if (!isObject(value)) return undefined;
+    // An object with none of its required fields is not a response, even if every one could default to [].
+    if (schema.required?.length && !schema.required.some((key) => Object.hasOwn(value, key)))
+      return undefined;
     const out: Record<string, unknown> = {};
     for (const [key, child] of Object.entries(schema.properties ?? {})) {
       if (!Object.hasOwn(value, key)) {

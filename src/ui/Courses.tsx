@@ -56,7 +56,8 @@ export function Home() {
     lectures.filter((lecture) => lecture.note && lecture.skeleton),
     now,
   );
-  const duePoints = api.dueWeakPoints(points, now);
+  const dueAt = (wp: WeakPoint) => api.nextReviewAt(wp)?.getTime() ?? 0;
+  const duePoints = api.dueWeakPoints(points, now).sort((a, b) => dueAt(a) - dueAt(b));
   return (
     <>
       <div className="home-hero">
@@ -89,7 +90,11 @@ export function Home() {
                 const lecture = lectures.find((item) => item.id === task.lectureId)!;
                 const days = Math.max(
                   0,
-                  Math.floor((now.getTime() - Date.parse(lecture.date)) / 86400000),
+                  Math.round(
+                    (new Date(now).setHours(0, 0, 0, 0) -
+                      new Date(lecture.date).setHours(0, 0, 0, 0)) /
+                      86400000,
+                  ),
                 );
                 return (
                   <li key={task.lectureId}>
@@ -300,6 +305,7 @@ export function TranscriptGuide() {
 }
 export function NewLecture({ courseId }: { courseId: string }) {
   const [step, setStep] = useState(0);
+  useEffect(() => window.scrollTo(0, 0), [step]);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [fileName, setFileName] = useState('transcript.txt');
@@ -311,6 +317,13 @@ export function NewLecture({ courseId }: { courseId: string }) {
   const [complete, setComplete] = useState(false);
   const [parseError, setParseError] = useState('');
   const task = useTask();
+  const [courseMissing, setCourseMissing] = useState(false);
+  useEffect(() => {
+    void store.get('courses', courseId).then(
+      (found) => setCourseMissing(!found),
+      () => undefined,
+    );
+  }, [courseId]);
   const preset = presetList().find((p) => p.id === store.readSettings().preset);
   const size = materials.reduce((sum, f) => sum + f.size, 0);
   function preview() {
@@ -372,6 +385,13 @@ export function NewLecture({ courseId }: { courseId: string }) {
     setComplete(true);
     setPhase('노트와 뼈대를 저장했어요.');
   }
+  if (courseMissing)
+    return (
+      <>
+        <h1>과목을 찾을 수 없어요</h1>
+        <a href="#/">← 처음으로</a>
+      </>
+    );
   return (
     <>
       <a href={`#/course/${courseId}`}>← 과목으로</a>
@@ -409,8 +429,21 @@ export function NewLecture({ courseId }: { courseId: string }) {
                   void task.run(async () => {
                     setFileName(file.name);
                     setSelectedFileName(file.name);
-                    setText(await file.text());
+                    const content = await file.text();
                     setParsed(undefined);
+                    // A PDF or other binary file read as text shows up as %PDF or control bytes.
+                    if (
+                      content.startsWith('%PDF') ||
+                      /[\u0000-\u0008\uFFFD]/.test(content.slice(0, 4000))
+                    ) {
+                      setText('');
+                      setParseError('텍스트 대본이 아니에요. .txt, .srt, .vtt 파일을 넣어 주세요.');
+                      return;
+                    }
+                    setText(content);
+                    setParseError(
+                      content.trim() ? '' : '파일이 비어 있어요. 내용이 있는 대본을 넣어 주세요.',
+                    );
                   });
               }}
             />
@@ -531,7 +564,7 @@ export function NewLecture({ courseId }: { courseId: string }) {
             <p className="muted">
               대본 {parsed?.segments.length ?? 0}개 문단 · 강의자료 {materials.length}개
             </p>
-            {phase && <p role="status">{phase}</p>}
+            {phase && !task.error && <p role="status">{phase}</p>}
             {task.busy && task.status}
             {!complete && (
               <div className="actions wizard-actions">

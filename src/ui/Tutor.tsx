@@ -6,8 +6,10 @@ import { Chat } from './Chat';
 import { dueList, Guide, useTask } from './shared';
 import { QUESTION_KIND_LABELS, ReviewFeedback } from './ReviewFeedback';
 
+// The hinted retry belongs to the day of the first answer; the next day starts with a fresh question.
 const pendingRetry = (attempt?: Attempt) =>
   !!attempt &&
+  new Date(attempt.at).toDateString() === new Date().toDateString() &&
   !attempt.practice &&
   attempt.attemptNumber === 1 &&
   !attempt.grade.correct &&
@@ -388,7 +390,12 @@ export function Tutor({ id }: { id: string }) {
                       '다시 써 봄 · 진도에 안 셈 · '
                     )
                   ) : attempt.quick || api.isQuickReview(point, new Date(attempt.at)) ? (
-                    <span title={quickPracticeTitle}>오늘 연습 · 진도에 안 셈 · </span>
+                    <span title={quickPracticeTitle}>
+                      {new Date(attempt.at).toDateString() === new Date().toDateString()
+                        ? '오늘 연습'
+                        : '당일 연습'}{' '}
+                      · 진도에 안 셈 ·{' '}
+                    </span>
                   ) : (
                     ''
                   )}

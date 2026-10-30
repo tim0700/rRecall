@@ -10,6 +10,8 @@ import {
   LevelSwitcher,
   useSkeletonLevel,
   useTask,
+  readDraft,
+  writeDraft,
 } from './shared';
 import { Chat } from './Chat';
 import { WeakList } from './Courses';
@@ -204,18 +206,37 @@ export function RecallPanel({
 }) {
   const [level, setLevel] = useSkeletonLevel(lecture.id, lecture.date, requestedLevel);
   const [photos, setPhotos] = useState<File[]>([]);
-  const [typed, setTyped] = useState('');
-  const [mode, setMode] = useState<'photo' | 'text'>('photo');
+  const [typed, setTypedState] = useState(() => readDraft(`${lecture.id}.recall`, ''));
+  const [mode, setModeState] = useState<'photo' | 'text'>(() =>
+    readDraft(`${lecture.id}.recall`, '') ? 'text' : 'photo',
+  );
+  const setTyped = (value: string) => {
+    setTypedState(value);
+    writeDraft(`${lecture.id}.recall`, value || undefined);
+  };
+  const setMode = setModeState;
+  const definitionDrafts = Object.entries(
+    readDraft<Record<string, string>>(`${lecture.id}.l2`, {}),
+  ).filter(([, text]) => text.trim());
   const task = useTask();
   const latest = lecture.recalls.at(-1);
-  const [newRecall, setNewRecall] = useState(Boolean(requestedLevel) || !latest?.reading);
+  const [newRecall, setNewRecall] = useState(
+    Boolean(requestedLevel) || !latest?.reading || Boolean(typed),
+  );
   if (!newRecall && latest?.reading)
     return (
       <>
         <p className="muted">복습 단계 {latest.level ?? 1}</p>
         <Confirmation key={latest.id} lecture={lecture} recall={latest} onSave={onSave} />
         <Chat lecture={lecture} purpose="after-reading" />
-        <button onClick={() => setNewRecall(true)}>백지복습 새로 하기</button>
+        <button
+          onClick={() => {
+            setNewRecall(true);
+            window.scrollTo(0, 0);
+          }}
+        >
+          백지복습 새로 하기
+        </button>
       </>
     );
   return (
@@ -241,20 +262,43 @@ export function RecallPanel({
       </div>
       {mode === 'photo' ? (
         <>
+          {/* capture forces the camera on phones and ignores multiple, so gallery and camera are separate. */}
           <label>
-            백지복습 사진
+            백지복습 사진 고르기
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => {
+                const picked = Array.from(e.target.files ?? []);
+                setPhotos((current) => [...current, ...picked]);
+                e.target.value = '';
+              }}
+            />
+          </label>
+          <label>
+            사진 촬영
             <input
               type="file"
               accept="image/*"
               capture="environment"
-              multiple
-              onChange={(e) => setPhotos(Array.from(e.target.files ?? []))}
+              onChange={(e) => {
+                const picked = Array.from(e.target.files ?? []);
+                setPhotos((current) => [...current, ...picked]);
+                e.target.value = '';
+              }}
             />
           </label>
           <ul className="file-summary">
             {photos.map((f, i) => (
               <li key={i}>
-                {f.name} · {(f.size / 1024 / 1024).toFixed(1)} MB
+                {f.name} · {(f.size / 1024 / 1024).toFixed(1)} MB{' '}
+                <button
+                  className="small"
+                  onClick={() => setPhotos((current) => current.filter((_, j) => j !== i))}
+                >
+                  삭제
+                </button>
               </li>
             ))}
           </ul>
@@ -276,6 +320,19 @@ export function RecallPanel({
             onChange={(e) => setTyped(e.target.value)}
           />
         </label>
+      )}
+      {level === 2 && mode === 'text' && definitionDrafts.length > 0 && (
+        <button
+          onClick={() =>
+            setTyped(
+              [typed.trim(), ...definitionDrafts.map(([term, text]) => `${term} — ${text.trim()}`)]
+                .filter(Boolean)
+                .join('\n'),
+            )
+          }
+        >
+          뼈대에 쓴 뜻 {definitionDrafts.length}개 가져오기
+        </button>
       )}
       <p className="muted">
         {mode === 'photo'
@@ -330,6 +387,7 @@ export function RecallPanel({
             setNewRecall(false);
             setPhotos([]);
             setTyped('');
+            writeDraft(`${lecture.id}.l2`, undefined);
           })
         }
       >
@@ -519,7 +577,12 @@ function LectureSkeleton({
         </a>
       </div>
       <LevelSwitcher level={level} onChange={setLevel} date={lecture.date} />
-      <SkeletonView skeleton={lecture.skeleton!} note={lecture.note} level={level} />
+      <SkeletonView
+        skeleton={lecture.skeleton!}
+        note={lecture.note}
+        level={level}
+        draftKey={lecture.id}
+      />
     </>
   );
 }

@@ -156,6 +156,23 @@ export function NoteView({ note }: { note: Note }) {
 export function recommendedLevel(date?: string): SkeletonLevel {
   return date && Date.now() - new Date(date).getTime() > 2 * 86400000 ? 2 : 1;
 }
+/** Session-scoped draft text that survives tab switches inside a lecture. */
+export function readDraft<T>(key: string, fallback: T): T {
+  try {
+    const raw = sessionStorage.getItem(`rrecall.draft.${key}`);
+    return raw === null ? fallback : (JSON.parse(raw) as T);
+  } catch {
+    return fallback;
+  }
+}
+export function writeDraft(key: string, value: unknown) {
+  try {
+    if (value === undefined) sessionStorage.removeItem(`rrecall.draft.${key}`);
+    else sessionStorage.setItem(`rrecall.draft.${key}`, JSON.stringify(value));
+  } catch {
+    /* Storage may be disabled; the draft stays in memory only. */
+  }
+}
 export function useSkeletonLevel(id: string, date: string, requestedLevel?: SkeletonLevel) {
   const [level, setLevel] = useState<SkeletonLevel>(() => {
     if (requestedLevel) return requestedLevel;
@@ -168,7 +185,13 @@ export function useSkeletonLevel(id: string, date: string, requestedLevel?: Skel
     return recommendedLevel(date);
   });
   useEffect(() => {
-    if (requestedLevel) setLevel(requestedLevel);
+    if (!requestedLevel) return;
+    setLevel(requestedLevel);
+    try {
+      sessionStorage.setItem(`rrecall.level.${id}`, String(requestedLevel));
+    } catch {
+      /* Keep the in-memory choice. */
+    }
   }, [id, requestedLevel]);
   return [
     level,
@@ -221,12 +244,18 @@ export function SkeletonView({
   skeleton,
   note,
   level = 1,
+  draftKey,
 }: {
   skeleton: Skeleton;
   note?: Note;
   level?: SkeletonLevel;
+  /** When set, level-2 definitions are kept for the session and offered to the recall page. */
+  draftKey?: string;
 }) {
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
+  const [definitions, setDefinitions] = useState<Record<string, string>>(() =>
+    draftKey ? readDraft(`${draftKey}.l2`, {}) : {},
+  );
   const [visibleHintBanks, setVisibleHintBanks] = useState<Set<number>>(new Set());
   useEffect(() => {
     setRevealed(new Set());
@@ -376,6 +405,12 @@ export function SkeletonView({
                         aria-label={`${term}의 뜻 쓰기`}
                         placeholder="내 말로 뜻을 써 보세요"
                         rows={3}
+                        value={definitions[term] ?? ''}
+                        onChange={(e) => {
+                          const next = { ...definitions, [term]: e.target.value };
+                          setDefinitions(next);
+                          if (draftKey) writeDraft(`${draftKey}.l2`, next);
+                        }}
                       />
                       {answer(
                         `${i}:${j}`,
@@ -533,7 +568,13 @@ export function useTask() {
   useEffect(() => {
     if (!busy) return;
     const id = window.setInterval(() => setSeconds((s) => s + 1), 1000);
-    return () => window.clearInterval(id);
+    // Closing or reloading mid-request loses the work and may still cost credits.
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener('beforeunload', warn);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener('beforeunload', warn);
+    };
   }, [busy]);
   async function run(action: (signal: AbortSignal) => Promise<void>) {
     if (active.current) return;
@@ -567,6 +608,7 @@ export function useTask() {
         : '이번 작업의 사용량 추정치를 받지 못했어요.',
     );
     await store.save({ usage: rows });
+    window.dispatchEvent(new Event('rrecall:usage'));
   }
   const status = (
     <>

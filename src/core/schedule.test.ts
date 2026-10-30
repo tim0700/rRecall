@@ -12,11 +12,15 @@ import {
 import { weakFixture } from './test-fixtures';
 import type { Lecture, Reading, Recall, WeakPoint } from './types';
 
-const day = 24 * 60 * 60 * 1000;
 const local = (date: number, hour = 9, minute = 0, second = 0) =>
   new Date(2026, 9, date, hour, minute, second);
-const elapsed = (from: Date, days: number, offset = 0) =>
-  new Date(from.getTime() + days * day + offset);
+// Due dates are calendar days: local midnight `days` days after `from`, plus `offset` ms.
+const elapsed = (from: Date, days: number, offset = 0) => {
+  const date = new Date(from);
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + days);
+  return new Date(date.getTime() + offset);
+};
 const weakCreated = (createdAt = local(1, 9)): WeakPoint => ({
   ...weakFixture(),
   createdAt: createdAt.toISOString(),
@@ -47,7 +51,7 @@ it('schedules the first lecture recall at level 1 from the lecture date, inclusi
       lectureId: lecture.id,
       level: 1,
       reason: '첫 꺼내기',
-      dueAt: lecture.date,
+      dueAt: elapsed(local(1), 0).toISOString(),
     },
   ]);
 });
@@ -460,4 +464,13 @@ it('nextReviewAt agrees with dueWeakPoints and ignores same-day practice', () =>
   const resolved = { ...wp, resolvedAt: local(10).toISOString() };
   expect(nextReviewAt(resolved)?.getTime()).toBe(elapsed(local(10), 21).getTime());
   expect(nextReviewAt({ ...resolved, retainedAt: local(31).toISOString() })).toBeUndefined();
+});
+
+it('counts two correct answers on one day as one step of the interval ladder', () => {
+  let wp = weakCreated();
+  const first = local(2, 9);
+  wp = applyReview(wp, true, first, 'q1', { step: 1 });
+  wp = applyReview(wp, true, local(2, 15), 'q2', { step: 2 });
+  expect(wp.resolvedAt).toBeUndefined();
+  expect(nextReviewAt(wp)).toEqual(elapsed(first, 3));
 });

@@ -213,6 +213,9 @@ footer {
   letter-spacing: -0.02em;
 }
 .tabs {
+  position: sticky;
+  top: var(--header-height, 0px);
+  z-index: 4;
   display: flex;
   gap: 4px;
   padding: 4px;
@@ -354,6 +357,7 @@ footer {
 }
 .chat-log {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   margin: 32px 0;
 }
@@ -388,6 +392,13 @@ footer {
   margin-left: auto;
   border: 1px solid var(--hairline);
   background: var(--canvas);
+}
+.chat {
+  min-width: 0;
+}
+.chat pre {
+  max-width: 100%;
+  overflow-x: auto;
 }
 .chat p {
   margin-bottom: 0;
@@ -723,6 +734,8 @@ footer {
   }
 }
 @media print {
+  .calibration-panel,
+  .chunk-connector,
   .level-switcher,
   .answer-control,
   .skeleton-answer,
@@ -871,4 +884,8 @@ button.danger {
 }
 .key-warning li {
   margin: 4px 0;
+}
+
+.file-summary:empty {
+  display: none;
 }

@@ -28,8 +28,13 @@ describe('tolerant response shaping', () => {
     expect(shaped.examples).toEqual(['Example']);
   });
   it('fills a missing required array without a minimum and keeps optional fields absent', () => {
+    const schema = obj({ list: arr(text), more: arr(text), note: str }, ['note']);
+    expect(coerceToSchema({ more: [] }, schema)).toEqual({ list: [], more: [] });
+  });
+  it('rejects an object that has none of its required fields', () => {
     const schema = obj({ list: arr(text), note: str }, ['note']);
-    expect(coerceToSchema({}, schema)).toEqual({ list: [] });
+    expect(coerceToSchema({}, schema)).toBeUndefined();
+    expect(coerceToSchema({ foo: 1 }, schema)).toBeUndefined();
   });
   it('still rejects when a required value is missing or below minItems', () => {
     expect(coerceToSchema({ examples: [] }, skeletonSchema)).toBeUndefined();
