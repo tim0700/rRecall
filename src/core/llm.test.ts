@@ -52,7 +52,6 @@ afterEach(() => {
 });
 it('resolves presets and validates advanced choices without sharing mutable defaults', () => {
   expect(listPresets().map((p) => p.id)).toEqual(['saver', 'standard', 'quality']);
-  expect(listPresets()[0].qualityNote).toBe('품질 확인 중');
   expect(resolveModel(settings, 'skeleton').model).toBe('gemini-3.8-flash');
   expect(resolveModel(settings, 'tutor').model).toBe('claude-haiku-5-5');
   expect(candidateModels('reading')).toHaveLength(3);

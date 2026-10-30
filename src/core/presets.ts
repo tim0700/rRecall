@@ -23,7 +23,6 @@ export function listPresets(): PresetInfo[] {
       models: all(haiku),
       creditsPerLecture: 20,
       creditsPerTutorSession: 13,
-      qualityNote: '품질 확인 중',
     },
     {
       id: 'standard',

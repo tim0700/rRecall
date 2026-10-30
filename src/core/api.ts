@@ -93,7 +93,6 @@ export interface PresetInfo {
   models: Record<Role, ModelChoice>;
   creditsPerLecture: number; // estimate: digest + skeleton + one reading
   creditsPerTutorSession: number; // estimate: 20 turns
-  qualityNote?: string; // e.g. "품질 확인 중"
 }
 export function listPresets(): PresetInfo[] {
   return presets.listPresets();

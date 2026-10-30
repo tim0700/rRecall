@@ -225,7 +225,6 @@ export function SettingsPage({ onKeyChange }: { onKeyChange: () => void }) {
             <strong>{p.label}</strong>
             <p>{p.description}</p>
             <p>강의당 약 {p.creditsPerLecture} 크레딧</p>
-            {p.qualityNote && <small>{p.qualityNote}</small>}
           </button>
         ))}
       </div>
