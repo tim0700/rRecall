@@ -123,7 +123,7 @@ export default function App() {
                 {connected
                   ? credits
                     ? `${credits.totalRemaining.toLocaleString()} 크레딧`
-                    : '잔액 확인'
+                    : '크레딧 확인'
                   : '키 연결 전'}
               </span>
               {connected && (

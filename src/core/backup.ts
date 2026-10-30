@@ -270,14 +270,14 @@ export function decodeBundle(json: unknown): { bundle: Bundle; files: StoredFile
     }
   }
   if (!matchesSchema(value, bundleSchema as Schema) || (value as Bundle).version !== 1)
-    throw new Error('지원하지 않거나 손상된 rRecall 백업이에요.');
+    throw new Error('지원하지 않거나 손상된 rRecall 백업 파일이에요.');
   const bundle = value as Bundle;
   const seen = new Set<string>();
   const files = bundle.files.map((file) => {
     const { base64, ...meta } = file;
     const bytes = base64ToBytes(base64);
     if (bytes.byteLength !== file.size || seen.has(file.id))
-      throw new Error('백업 파일 크기나 식별자가 올바르지 않아요.');
+      throw new Error('백업 파일의 크기나 형식이 올바르지 않아요.');
     seen.add(file.id);
     return { ...meta, blob: new Blob([bytes], { type: file.mime }) };
   });

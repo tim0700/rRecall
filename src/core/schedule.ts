@@ -37,7 +37,7 @@ export function lectureReviewTasks(lectures: Lecture[], now: Date): LectureRevie
         {
           lectureId: lecture.id,
           level: last ? 2 : 1,
-          reason: last ? `${interval}일 간격으로 다시 꺼내기` : '첫 꺼내기',
+          reason: last ? `${interval}일 간격으로 다시 복습하기` : '첫 복습',
           dueAt: new Date(due).toISOString(),
         },
       ];

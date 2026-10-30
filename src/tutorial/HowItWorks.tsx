@@ -12,17 +12,17 @@ export function StudyLoop() {
             내용 순서예요.
           </li>
           <li>
-            <strong>질문</strong> 이해가 안 되는 곳만 노트 안에서 짧게 물어봐요.
+            <strong>질문하기</strong> 이해가 안 되는 곳만 노트 안에서 짧게 물어봐요.
           </li>
           <li>
-            <strong>꺼내기</strong> 노트를 덮고 뼈대만 보며 종이에 써요. 검정 펜은 혼자 떠올린 것,
+            <strong>백지복습</strong> 노트를 덮고 뼈대만 보며 종이에 써요. 검정 펜은 혼자 떠올린 것,
             빨간 펜은 노트를 보고 고친 것이에요.
           </li>
           <li>
             <strong>약점 고르기</strong> AI가 종이를 읽은 결과에서 진짜 빈틈만 내가 골라요.
           </li>
           <li>
-            <strong>간격 복습</strong> 고른 약점은 날짜를 띄워 문제로 다시 만나요.
+            <strong>약점 복습</strong> 고른 약점은 날짜를 띄워 문제로 다시 풀어요.
           </li>
         </ol>
       </section>
@@ -99,16 +99,16 @@ export function ReviewSchedule() {
           </tr>
           <tr>
             <th scope="row">틀리면</th>
-            <td>다음 날부터 다시 시작해요.</td>
+            <td>다음 날 다시 확인해요. 전에 맞힌 날은 그대로 남아요.</td>
           </tr>
           <tr>
             <th scope="row">해결 후 21일 뒤</th>
-            <td>오래 기억하는지 한 번 더 확인해요.</td>
+            <td>장기 확인 · 오래 기억하는지 한 번 더 확인해요.</td>
           </tr>
         </tbody>
       </table>
       <p className="notice">
-        해결 기준: 서로 다른 날 힌트 없이 두 번 맞히고, 나중 답이 2단계 문제일 때예요. “다시 써
+        해결 기준: 서로 다른 날에 힌트 없이 두 번 맞히고, 나중 문제가 2단계 문제일 때예요. “다시 써
         보기”와 “한 걸음 더”는 언제든 연습할 수 있지만 진도에는 세지 않아요.
       </p>
     </section>

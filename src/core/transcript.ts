@@ -17,7 +17,7 @@ export function parseTranscript(fileName: string, raw: string): TranscriptImport
     return {
       segments: [],
       source: '텍스트',
-      warnings: ['전사문이 비어 있어요. 텍스트를 확인해 주세요.'],
+      warnings: ['대본이 비어 있어요. 텍스트를 확인해 주세요.'],
     };
   const lines = text.split('\n');
   const segments: Segment[] = [];
@@ -105,6 +105,6 @@ export function parseTranscript(fileName: string, raw: string): TranscriptImport
       .map((paragraph) => ({ text: paragraph.trim() }))
       .filter((s) => s.text),
     source: '텍스트',
-    warnings: ['시간·화자 구조를 찾지 못해 일반 텍스트로 가져왔어요.'],
+    warnings: ['시간이나 말한 사람 구분을 찾지 못해 일반 텍스트로 가져왔어요.'],
   };
 }

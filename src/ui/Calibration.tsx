@@ -8,7 +8,7 @@ const MISSED_LABELS: Record<string, string> = {
   term: '용어를 못 떠올림',
   concept: '뜻이 없거나 틀림',
   section: '묶음이 빠짐',
-  corrected: '빨간 펜으로 고침',
+  corrected: '빨간 펜으로 첨삭함',
 };
 
 function Items({ items }: { items: string[] }) {
@@ -39,7 +39,7 @@ export function Calibration({ lecture }: { lecture: Lecture }) {
     <section className="calibration-panel">
       <h2>내 백지복습 기록</h2>
       {!recalls.length && (
-        <p className="muted">백지복습을 하면 꺼낸 것과 놓친 것을 함께 볼 수 있어요.</p>
+        <p className="muted">백지복습을 하면 기억한 것과 놓친 것을 함께 볼 수 있어요.</p>
       )}
       {recalls.map((recall) => {
         const reading = recall.reading!;
@@ -53,10 +53,10 @@ export function Calibration({ lecture }: { lecture: Lecture }) {
             </summary>
             <div className="calibration-columns">
               <section>
-                <h3>꺼낸 것</h3>
+                <h3>기억한 것</h3>
                 <Items
                   items={reading.recalled.map(
-                    (item) => `${item.text}${item.uncertain ? ' (판독 확인 필요)' : ''}`,
+                    (item) => `${item.text}${item.uncertain ? ' (읽기 확인 필요)' : ''}`,
                   )}
                 />
               </section>
@@ -67,7 +67,7 @@ export function Calibration({ lecture }: { lecture: Lecture }) {
                     .filter((gap) => gap.kind !== 'self-flagged')
                     .map(
                       (gap) =>
-                        `${gap.concept} · ${MISSED_LABELS[api.gapKind(gap.kind)] ?? '빠짐'}${gap.uncertain ? ' (판독 확인 필요)' : ''}`,
+                        `${gap.concept} · ${MISSED_LABELS[api.gapKind(gap.kind)] ?? '빠짐'}${gap.uncertain ? ' (읽기 확인 필요)' : ''}`,
                     )}
                 />
               </section>
@@ -90,8 +90,8 @@ export function Calibration({ lecture }: { lecture: Lecture }) {
           <h3>안다고 생각했지만 놓쳤어요</h3>
           <Items items={calibration.overestimated} />
           <p className="muted">
-            같은 이름으로 기록된 개념을 비교해요. 오늘 연습과 힌트 후 정답은 알고 있었다는 근거로
-            세지 않아요.
+            같은 이름으로 기록된 개념을 비교해요. 같은 날 연습했거나 힌트를 보고 맞힌 경우는 이미
+            알고 있던 것으로 세지 않아요.
           </p>
         </div>
       )}

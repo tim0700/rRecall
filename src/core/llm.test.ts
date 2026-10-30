@@ -459,7 +459,7 @@ it('repairs word-bank mismatches once and uses skeleton-specific Korean instruct
   expect(fetcher).toHaveBeenCalledTimes(2);
   expect(result.value.promptVersion).toBe('skeleton-v3.2');
   expect(result.value.leakWarnings).toEqual([
-    '묶음 1 빈칸 1의 정답이 해당 단어 목록에 없어요. 복습 전에 확인해 주세요.',
+    '묶음 1 빈칸 1의 정답이 단어 모음에 없어요. 복습 전에 확인해 주세요.',
   ]);
   expect(bodyAt(fetcher).systemInstruction.parts[0].text).toContain('Korean without English terms');
   expect(bodyAt(fetcher).systemInstruction.parts[0].text).not.toContain(

@@ -50,7 +50,7 @@ export function ReviewFeedback({
       {grade.correct ? (
         grade.followUp && (
           <div>
-            <small>선택 · 한 단계 더 생각해 보기 (해결 판정에는 반영하지 않아요)</small>
+            <small>선택 · 한 걸음 더 생각해 보기 (해결 진도에는 반영하지 않아요)</small>
             <p>{grade.followUp}</p>
           </div>
         )
@@ -84,7 +84,7 @@ export function ReviewFeedback({
           )}
         </>
       ) : (
-        <p>힌트 · {grade.hint || '질문이 요구하는 핵심과 이유를 나누어 떠올려 보세요.'}</p>
+        <p>힌트 · {grade.hint || '문제가 묻는 핵심과 이유를 나누어 떠올려 보세요.'}</p>
       )}
     </aside>
   );

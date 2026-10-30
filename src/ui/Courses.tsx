@@ -27,7 +27,7 @@ export function WeakList({ points }: { points: WeakPoint[] }) {
         <li key={w.id}>
           <a href={`#/tutor/${w.id}`}>{w.concept}</a>
           <span className="badge">{weakStatus(w, due.has(w.id))}</span>
-          <small aria-label={`해결 진행 ${api.reviewProgress(w).correctDays} / 2`}>
+          <small aria-label={`해결 진도 ${api.reviewProgress(w).correctDays} / 2`}>
             {'●'.repeat(api.reviewProgress(w).correctDays)}
             {'○'.repeat(2 - api.reviewProgress(w).correctDays)}
           </small>
@@ -99,7 +99,7 @@ export function Home() {
                 return (
                   <li key={task.lectureId}>
                     <a href={`#/lecture/${task.lectureId}/skeleton/${task.level}`}>
-                      {lecture.title} — {task.level}단계 꺼내기
+                      {lecture.title} — 복습 단계 {task.level} 백지복습
                     </a>
                     <small>
                       강의 후 {days}일 · {task.reason}
@@ -233,7 +233,7 @@ export function CoursePage({ id }: { id: string }) {
                 confirmDelete === l.id ? (
                   <li key={l.id} className="confirm-row">
                     <p>
-                      <strong>{l.title}</strong>을(를) 지울까요? 노트·뼈대·백지·질문 기록과 이
+                      <strong>{l.title}</strong> 강의를 지울까요? 노트·뼈대·백지복습·질문 기록과 이
                       강의의 약점이 함께 지워지고, 되돌릴 수 없어요.
                     </p>
                     <div className="form-actions">
@@ -263,7 +263,7 @@ export function CoursePage({ id }: { id: string }) {
                     <a href={`#/lecture/${l.id}/note`}>{l.title}</a>
                     <small>{new Date(l.date).toLocaleDateString('ko-KR')}</small>
                     <a href={`#/lecture/${l.id}/weak-points`}>
-                      열린 약점{' '}
+                      남은 약점{' '}
                       {
                         points.filter((point) => point.lectureId === l.id && !point.resolvedAt)
                           .length
@@ -397,7 +397,7 @@ export function NewLecture({ courseId }: { courseId: string }) {
       <a href={`#/course/${courseId}`}>← 과목으로</a>
       <h1>새 강의</h1>
       <nav className="stepper" aria-label="강의 준비 단계">
-        {['대본', '강의자료', '정리'].map((s, i) => (
+        {['대본', '강의 자료', '정리'].map((s, i) => (
           <span
             className={step === i ? 'active' : ''}
             aria-current={step === i ? 'step' : undefined}
@@ -415,7 +415,7 @@ export function NewLecture({ courseId }: { courseId: string }) {
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="예: 4주차 · 핵심 개념"
+              placeholder="예: 4주 차 · 핵심 개념"
             />
           </label>
           <label>
@@ -450,7 +450,7 @@ export function NewLecture({ courseId }: { courseId: string }) {
           </label>
           {selectedFileName && <p className="file-summary">선택한 대본 · {selectedFileName}</p>}
           <label>
-            또는 대본 붙여넣기
+            또는 대본 붙여 넣기
             <textarea
               rows={8}
               value={text}
@@ -490,14 +490,14 @@ export function NewLecture({ courseId }: { courseId: string }) {
                 ? '강의 제목을 입력해 주세요.'
                 : !parsed?.segments.length
                   ? '대본을 넣고 ‘대본 확인하기’를 눌러 주세요.'
-                  : '대본을 확인했어요. 강의자료를 넣어 볼까요?'}
+                  : '대본을 확인했어요. 강의 자료를 넣어 볼까요?'}
             </p>
             <button
               className="primary"
               disabled={!title.trim() || !parsed?.segments.length || task.busy}
               onClick={() => setStep(1)}
             >
-              강의자료 넣기 →
+              강의 자료 넣기 →
             </button>
           </div>
         </>
@@ -547,8 +547,8 @@ export function NewLecture({ courseId }: { courseId: string }) {
       {step === 2 && (
         <>
           <Guide
-            what="예상 사용량을 확인하고 정리를 시작하세요."
-            why="대본과 자료로 노트, 빈칸 복습 뼈대를 차례로 만들어요."
+            what="예상 크레딧을 확인하고 정리를 시작하세요."
+            why="대본과 자료로 노트와 백지복습 뼈대를 차례로 만들어요."
             tip="노트가 완성되면 먼저 저장해요. 뼈대 만들기에 실패해도 노트는 남아요."
           />
           <section className="card">
@@ -556,13 +556,14 @@ export function NewLecture({ courseId }: { courseId: string }) {
             <p>
               {preset
                 ? `강의 정리와 백지복습 읽기까지 약 ${preset.creditsPerLecture} 크레딧`
-                : '현재 예상 사용량을 불러올 수 없어요.'}
+                : '현재 예상 크레딧을 불러올 수 없어요.'}
             </p>
             <p className="muted">
-              2026-10-29 ChatKHU 사용량·단가 기반 추정. 자료 분량과 모델 설정에 따라 달라져요.
+              2026-10-29 ChatKHU 사용량·단가를 기준으로 추정한 값이에요. 자료 분량과 모델 설정에
+              따라 달라져요.
             </p>
             <p className="muted">
-              대본 {parsed?.segments.length ?? 0}개 문단 · 강의자료 {materials.length}개
+              대본 {parsed?.segments.length ?? 0}개 문단 · 강의 자료 {materials.length}개
             </p>
             {phase && !task.error && <p role="status">{phase}</p>}
             {task.busy && task.status}

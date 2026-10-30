@@ -24,7 +24,7 @@ import { tutorialSteps } from './steps';
 import { FirstWeek, ReviewSchedule, StudyLoop, WhyWriteByHand } from './HowItWorks';
 import './Tutorial.css';
 
-const exampleLearnerAnswer = '이산화탄소와 물을 이용합니다.';
+const exampleLearnerAnswer = '이산화탄소와 물을 이용해요.';
 const noPhotoIds: string[] = [];
 
 const exampleGrade: Grade = {
@@ -68,7 +68,7 @@ function Attribution({ text, simulatedDates }: { text?: string; simulatedDates?:
   return (
     <div className="tutorial-attribution muted">
       {simulatedDates && <span className="badge">가정한 날짜</span>}
-      <span>{text ?? '튜토리얼용 합성 예시'}</span>
+      <span>{text ?? '튜토리얼용 가상 예시'}</span>
     </div>
   );
 }
@@ -252,7 +252,7 @@ export default function Tutorial() {
         return (
           <section className="card tutorial-key-guide">
             <h2>실제로 시작할 때 따라 하세요</h2>
-            <p>API 키는 rRecall이 내 ChatKHU 계정으로 AI를 쓰도록 연결하는 개인 열쇠예요.</p>
+            <p>ChatKHU 키는 rRecall이 내 ChatKHU 계정으로 AI를 쓰도록 연결하는 개인 열쇠예요.</p>
             <KeyGuide />
             <p className="muted">튜토리얼에서는 키를 입력하거나 사용하지 않아요.</p>
           </section>
@@ -260,7 +260,7 @@ export default function Tutorial() {
       case 'stt':
         return (
           <section className="card">
-            <h2>녹음은 글 파일로 바꿔 주세요</h2>
+            <h2>녹음은 대본 파일로 바꿔 주세요</h2>
             <p>
               휴대폰으로 강의를 녹음했다면 Clova Note 같은 음성 기록 앱에서 txt 파일로 내보낼 수
               있어요. 강의에서 자막이나 대본을 제공했다면 그 파일을 그대로 써도 돼요.
@@ -335,7 +335,7 @@ export default function Tutorial() {
             </p>
             {!isRevealed ? (
               <button type="button" onClick={() => reveal(step.id)}>
-                답변 받아보기 체험
+                답변 받아 보기 체험
               </button>
             ) : (
               <>
@@ -369,7 +369,7 @@ export default function Tutorial() {
           <section className="card">
             {!isRevealed ? (
               <button type="button" onClick={() => reveal(step.id)}>
-                백지복습 읽어보기 체험
+                백지복습 읽기 체험
               </button>
             ) : reading ? (
               <>
@@ -401,7 +401,7 @@ export default function Tutorial() {
                         />
                         <small>
                           {gap.why}
-                          {gap.uncertain ? ' · 사진 판독이 확실하지 않아요' : ''}
+                          {gap.uncertain ? ' · 사진 읽기가 확실하지 않아요' : ''}
                         </small>
                       </span>
                     </div>
@@ -424,11 +424,11 @@ export default function Tutorial() {
                 </button>
                 {savedWeakPoints && (
                   <p className="notice">
-                    선택한 약점 {savedWeakPoints.length}개를 튜토리얼 메모리에 담았어요.
+                    선택한 약점 {savedWeakPoints.length}개를 튜토리얼에 임시로 담았어요.
                   </p>
                 )}
                 <p className="muted">
-                  선택과 수정은 이 튜토리얼 안에서만 유지되며 내 저장소에는 들어가지 않아요.
+                  선택과 수정은 이 튜토리얼 안에서만 유지되며 실제 학습 기록에는 저장되지 않아요.
                 </p>
               </>
             ) : (
@@ -440,7 +440,7 @@ export default function Tutorial() {
         return (
           <section className="card">
             <ExperienceLabel />
-            <h2>열린 약점</h2>
+            <h2>남은 약점</h2>
             {(savedWeakPoints ?? []).map((item) => (
               <article key={item.sourceGapId} className="tutorial-weak-point">
                 <h3>{item.concept}</h3>
@@ -499,7 +499,7 @@ export default function Tutorial() {
                                 ? '재도전'
                                 : replayAttempts.length > 1
                                   ? `${index + 1}차 답안`
-                                  : '학습자 답안'}
+                                  : '내 답'}
                           </span>{' '}
                           {isRevealed && (attempt.grade.correct ? '맞았어요' : '한 번 더 살펴봐요')}
                         </p>
@@ -523,7 +523,7 @@ export default function Tutorial() {
                           reveal={canRevealWrongAnswer}
                         />
                         {latestReplayAttempt.quick ? (
-                          <p>오늘 연습 기록이라 해결 횟수에는 포함되지 않아요.</p>
+                          <p>오늘 연습 기록이라 해결 진도에는 세지 않아요.</p>
                         ) : (
                           <p>
                             {weakPoint?.resolvedAt
@@ -599,7 +599,7 @@ export default function Tutorial() {
             <FirstWeek />
             <section className="card tutorial-final">
               <h2>기록에서 기억까지, 한 바퀴를 둘러봤어요</h2>
-              <p>내 강의에서는 키 확인부터 시작해 강의 글과 자료를 넣으면 돼요.</p>
+              <p>내 강의에서는 키 확인부터 시작해 대본과 자료를 넣으면 돼요.</p>
               <div className="actions">
                 <a className="button primary" href="#/setup">
                   내 강의로 시작하기

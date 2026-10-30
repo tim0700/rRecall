@@ -100,7 +100,7 @@ it('detects even one-character answers and warns on exact bank membership', () =
   skeleton.bundles[0].blanks = [{ sentence: '값 ___ (값)', answer: '값' }];
   expect(findLeaks(skeleton)).toHaveLength(1);
   expect(wordBankWarnings(skeleton)).toEqual([
-    '묶음 1 빈칸 1의 정답이 해당 단어 목록에 없어요. 복습 전에 확인해 주세요.',
+    '묶음 1 빈칸 1의 정답이 단어 모음에 없어요. 복습 전에 확인해 주세요.',
   ]);
   skeleton.bundles[0].wordBank = ['값'];
   expect(wordBankWarnings(skeleton)).toEqual([]);

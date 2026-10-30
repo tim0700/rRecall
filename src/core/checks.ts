@@ -97,9 +97,7 @@ export function wordBankWarnings(skeleton: Pick<Skeleton, 'bundles'>): string[] 
     bundle.blanks.flatMap((blank, j) =>
       bundle.wordBank.includes(blank.answer)
         ? []
-        : [
-            `묶음 ${i + 1} 빈칸 ${j + 1}의 정답이 해당 단어 목록에 없어요. 복습 전에 확인해 주세요.`,
-          ],
+        : [`묶음 ${i + 1} 빈칸 ${j + 1}의 정답이 단어 모음에 없어요. 복습 전에 확인해 주세요.`],
     ),
   );
 }

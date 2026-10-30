@@ -55,7 +55,7 @@ export function Confirmation({
       {(['paper', 'asked'] as const).map((source) => (
         <section key={source}>
           {gaps.some((g) => (g.source ?? 'paper') === source) && (
-            <h3>{source === 'asked' ? '질문하기에서 물어본 개념' : '백지에서 확인한 약점'}</h3>
+            <h3>{source === 'asked' ? '질문하기에서 물어본 개념' : '백지복습에서 확인한 약점'}</h3>
           )}
           {gaps
             .filter((g) => (g.source ?? 'paper') === source)
@@ -82,7 +82,9 @@ export function Confirmation({
                   </span>
                 </label>
                 {g.uncertain && (
-                  <p className="muted">읽기가 불확실해요. 사진과 노트를 보고 직접 골라 주세요.</p>
+                  <p className="muted">
+                    정확히 읽었는지 확실하지 않아요. 사진과 노트를 보고 직접 골라 주세요.
+                  </p>
                 )}
                 <p>{g.why}</p>
                 {g.noteSection && <small>노트 위치 · {g.noteSection}</small>}
@@ -185,7 +187,7 @@ export function Confirmation({
             })
           }
         >
-          약점으로 저장{selected.length ? ` (${selected.length}개)` : ' (선택 없음 확인)'}
+          약점으로 저장{selected.length ? ` (${selected.length}개)` : ' (선택 없음)'}
         </button>
       )}
       {task.status}
@@ -242,9 +244,9 @@ export function RecallPanel({
   return (
     <>
       <Guide
-        what="검정 펜으로 떠올리고, 빨간 펜으로 고친 뒤 촬영하세요."
+        what="기억나는 내용은 검정 펜으로 적고, 빨간 펜으로 첨삭한 뒤 촬영하세요."
         why="처음 기억한 내용과 노트를 보고 보완한 내용을 나눠 약점을 찾아요."
-        tip="종이를 평평하게 놓고 밝은 곳에서 위에서 찍어 주세요."
+        tip="밝은 곳에서 종이를 평평하게 놓고 위에서 반듯하게 찍어 주세요."
       />
       <LevelSwitcher level={level} onChange={setLevel} date={lecture.date} />
       <ol>
@@ -304,13 +306,13 @@ export function RecallPanel({
           </ul>
           {photos.reduce((s, f) => s + f.size, 0) > 18 * 1024 * 1024 && (
             <p className="notice">
-              사진 합계가 18 MB를 넘었어요. 크기를 줄이면 전송 실패를 줄일 수 있어요.
+              사진 합계가 18 MB를 넘었어요. 용량을 줄이면 전송 실패를 막을 수 있어요.
             </p>
           )}
         </>
       ) : (
         <label>
-          기억한 내용과 고친 내용
+          기억한 내용과 첨삭한 내용
           <textarea
             rows={8}
             placeholder={
@@ -341,7 +343,7 @@ export function RecallPanel({
             : '사진을 선택하면 읽기를 시작할 수 있어요.'
           : typed.trim()
             ? '입력한 내용을 읽을 준비가 됐어요.'
-            : '기억한 내용과 고친 내용을 입력해 주세요.'}
+            : '기억한 내용과 첨삭한 내용을 입력해 주세요.'}
       </p>
       <button
         className="primary"
@@ -464,7 +466,7 @@ export function LecturePage({
           <Guide
             what="큰 질문부터 읽고 핵심 개념을 살펴보세요."
             why="내용이 어떻게 연결되는지 알아야 내 말로 떠올릴 수 있어요."
-            tip="근거 보기를 눌러 대본과 비교하세요. AI 정리에는 틀린 내용이 있을 수 있어요."
+            tip="근거 보기를 눌러 대본과 비교하세요. AI가 정리한 노트에는 틀린 내용이 있을 수 있어요."
           />
           {lecture.note ? (
             <NoteView note={lecture.note} />
@@ -479,9 +481,9 @@ export function LecturePage({
       {tab === 'skeleton' && (
         <>
           <Guide
-            what="빈칸을 보며 강의 내용을 떠올려 보세요."
+            what="뼈대를 보며 강의 내용을 떠올려 보세요."
             why="정답을 바로 읽지 않고 기억에서 꺼내는 연습이에요."
-            tip="강의 날짜에 따라 단계를 추천해요. 나에게 맞는 단계로 바꿔도 좋아요."
+            tip="강의 날짜에 따라 복습 단계를 추천해요. 나에게 맞는 단계로 바꿔도 좋아요."
           />
           {lecture.skeleton ? (
             <>
@@ -567,7 +569,7 @@ function LectureSkeleton({
   printBase: string;
 }) {
   const [level, setLevel] = useSkeletonLevel(lecture.id, lecture.date, requestedLevel);
-  usePrintTitle(`${printBase} - 뼈대 ${level}단계`);
+  usePrintTitle(`${printBase} - 복습 단계 ${level}`);
   return (
     <>
       <div className="actions">
@@ -596,10 +598,10 @@ function LectureWeakPoints({ lecture }: { lecture: Lecture }) {
   }, [lecture.id]);
   return (
     <section>
-      <h2>열린 약점</h2>
+      <h2>남은 약점</h2>
       <WeakList points={points.filter((point) => !point.resolvedAt)} />
       <details>
-        <summary>해결됨 ({points.filter((point) => point.resolvedAt).length})</summary>
+        <summary>해결한 약점 ({points.filter((point) => point.resolvedAt).length})</summary>
         <WeakList points={points.filter((point) => point.resolvedAt)} />
       </details>
       {task.status}

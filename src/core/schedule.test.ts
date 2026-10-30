@@ -50,7 +50,7 @@ it('schedules the first lecture recall at level 1 from the lecture date, inclusi
     {
       lectureId: lecture.id,
       level: 1,
-      reason: '첫 꺼내기',
+      reason: '첫 복습',
       dueAt: elapsed(local(1), 0).toISOString(),
     },
   ]);

@@ -7,7 +7,7 @@ export function errorText(e: unknown) {
   try {
     return api.explainError(e);
   } catch {
-    return '처리를 마치지 못했어요. 잠시 후 다시 시도해 주세요.';
+    return '작업을 완료하지 못했어요. 잠시 후 다시 시도해 주세요.';
   }
 }
 export function Guide({ what, why, tip }: { what: string; why: string; tip: string }) {
@@ -109,7 +109,11 @@ export function NoteView({ note }: { note: Note }) {
                       </span>
                     </span>
                     {point.fromHandwriting && (
-                      <span role="img" aria-label="내 필기에서 온 내용" title="내 필기에서 온 내용">
+                      <span
+                        role="img"
+                        aria-label="내 필기에서 가져온 내용"
+                        title="내 필기에서 가져온 내용"
+                      >
                         ✎
                       </span>
                     )}
@@ -339,7 +343,7 @@ export function SkeletonView({
               note?.sections
                 .find((section) => section.title === b.title)
                 ?.points.map((point) => point.text)
-                .join('\n\n') || '대응하는 노트 설명이 없어요. 노트를 직접 확인해 주세요.';
+                .join('\n\n') || '연결된 노트 설명이 없어요. 노트를 직접 확인해 주세요.';
             return (
               <section className="card" key={i}>
                 <h3>{b.title}</h3>
@@ -590,7 +594,7 @@ export function useTask() {
     } catch (e) {
       setError(
         ctrl.signal.aborted
-          ? '작업을 중단했어요. 이미 처리된 요청에는 크레딧이 사용될 수 있어요.'
+          ? '작업을 중단했어요. 이미 진행한 부분에는 크레딧이 사용될 수 있어요.'
           : errorText(e),
       );
     } finally {
@@ -605,7 +609,7 @@ export function useTask() {
     setMessage(
       estimates.length
         ? `이번 작업 약 ${estimates.reduce((a, b) => a + b, 0).toFixed(1)} 크레딧${estimates.length < rows.length ? ' (일부 추정)' : ''}`
-        : '이번 작업의 사용량 추정치를 받지 못했어요.',
+        : '이번 작업의 예상 크레딧을 불러오지 못했어요.',
     );
     await store.save({ usage: rows });
     window.dispatchEvent(new Event('rrecall:usage'));

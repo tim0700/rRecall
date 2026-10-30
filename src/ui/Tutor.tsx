@@ -127,7 +127,7 @@ export function Tutor({ id }: { id: string }) {
         <span
           className="review-dots"
           role="img"
-          aria-label={`해결 진행 ${progress.correctDays} / 2`}
+          aria-label={`해결 진도 ${progress.correctDays} / 2`}
         >
           {'●'.repeat(progress.correctDays)}
           {'○'.repeat(2 - progress.correctDays)}
@@ -142,9 +142,9 @@ export function Tutor({ id }: { id: string }) {
         </small>
       )}
       <Guide
-        what="노트를 덮고 질문에 답해 보세요."
-        why="약점이 생긴 다음 날부터, 서로 다른 날 힌트 없이 맞히고 나중 답이 적용·연결 문제이면 해결돼요."
-        tip="첫 오답에는 힌트를 보고 한 번 더 답할 수 있어요. 힌트 후 정답은 기록만 남기고 단계를 올리지 않아요."
+        what="노트를 덮고 문제에 답해 보세요."
+        why="약점이 생긴 다음 날부터, 서로 다른 날에 힌트 없이 맞히고 나중 문제가 적용·연결 문제이면 해결돼요."
+        tip="처음 틀렸을 때는 힌트를 보고 한 번 더 답할 수 있어요. 힌트를 보고 맞힌 답은 기록만 남기고 단계를 올리지 않아요."
       />
       {(!question || complete) && <p>{point.detail}</p>}
       <button
@@ -171,17 +171,17 @@ export function Tutor({ id }: { id: string }) {
               setFollowUpAnswer('');
             } else
               task.setMessage(
-                '새로운 질문의 근거와 답 노출 여부를 확인하지 못했어요. 다시 시도해 주세요.',
+                '새 문제의 근거와 정답 노출 여부를 확인하지 못했어요. 다시 시도해 주세요.',
               );
           })
         }
       >
-        {question ? '새 질문 만들기' : '복습 질문 만들기'}
+        {question ? '새 문제 만들기' : '복습 문제 만들기'}
       </button>
       {question && (
         <section className="card">
           <h2>
-            복습 질문{' '}
+            복습 문제{' '}
             <small className="badge">
               {QUESTION_KIND_LABELS[question.kind]} · {question.step ?? 1}단계
             </small>
@@ -293,7 +293,7 @@ export function Tutor({ id }: { id: string }) {
             <section className="notice">
               <h3>한 걸음 더</h3>
               <p className="plain">{followUpQuestion.prompt}</p>
-              <small>연습 답안이에요. 해결 판정과 복습 진도에는 반영하지 않아요.</small>
+              <small>연습 답안이에요. 해결 진도에는 반영하지 않아요.</small>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -369,7 +369,7 @@ export function Tutor({ id }: { id: string }) {
       <section className="card answer-history">
         <h2>최근 답안 기록</h2>
         {attempts.length === 0 && (
-          <p className="muted">아직 저장된 답안이 없어요. 위의 질문에 답해 보세요.</p>
+          <p className="muted">아직 저장된 답안이 없어요. 위의 문제에 답해 보세요.</p>
         )}
         {[...attempts]
           .sort((a, b) => Date.parse(b.at) - Date.parse(a.at))
@@ -402,7 +402,7 @@ export function Tutor({ id }: { id: string }) {
                   {attempt.hinted ? '힌트 후 재도전 · ' : ''}
                   {attempt.gaveUp ? '설명 확인' : attempt.grade.correct ? '맞힘' : '다시 보기'}
                 </summary>
-                <p className="plain">{past?.prompt ?? '복습 질문'}</p>
+                <p className="plain">{past?.prompt ?? '복습 문제'}</p>
                 <p className="plain">내 답: {attempt.answer}</p>
                 <p>{attempt.grade.feedback}</p>
                 {waiting ? (
@@ -415,7 +415,7 @@ export function Tutor({ id }: { id: string }) {
                   )
                 )}
                 {!attempt.practice && attempt.grade.correct && attempt.grade.followUp && (
-                  <p>선택 질문 · {attempt.grade.followUp}</p>
+                  <p>선택 문제 · {attempt.grade.followUp}</p>
                 )}
               </details>
             );

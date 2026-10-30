@@ -62,7 +62,7 @@ export function KeyGuide() {
           />
         </li>
         <li>
-          이름에 <code>rRecall</code>처럼 알아보기 쉬운 이름을 적고 <strong>생성하기</strong>를
+          이름 칸에 <code>rRecall</code>처럼 알아보기 쉬운 이름을 적고 <strong>생성하기</strong>를
           눌러요. 설명은 비워도 돼요.
           <img
             className="guide-shot guide-shot-small"
@@ -100,7 +100,7 @@ export function Setup({ onKeyChange }: { onKeyChange: () => void }) {
       <h1>내 ChatKHU 연결하기</h1>
       <Guide
         what="ChatKHU에서 만든 키를 입력해 주세요."
-        why="내 잔액으로 강의를 정리하고 복습 피드백을 받을 수 있어요."
+        why="내 크레딧으로 강의를 정리하고 복습 피드백을 받을 수 있어요."
         tip="공용 컴퓨터라면 기억하기를 꺼 주세요."
       />
       <section className="card">
@@ -142,7 +142,7 @@ export function Setup({ onKeyChange }: { onKeyChange: () => void }) {
             이 브라우저에 기억하기
           </label>
           <p className="muted">
-            공용 PC에서는 기억하지 마세요. 기억한 키는 이 브라우저를 쓰는 다른 사람이 이용할 수
+            공용 컴퓨터에서는 키를 기억하지 마세요. 저장된 키는 이 브라우저를 쓰는 다른 사람도 쓸 수
             있어요.
           </p>
           <button className="primary" disabled={task.busy || !key.trim()}>
@@ -152,11 +152,11 @@ export function Setup({ onKeyChange }: { onKeyChange: () => void }) {
         {task.status}
         {credit && (
           <div className="notice">
-            <strong>남은 잔액 {credit.totalRemaining.toLocaleString()} 크레딧</strong>
+            <strong>{credit.totalRemaining.toLocaleString()} 크레딧 남음</strong>
             <p>
               {preset
-                ? `이번 달 약 ${Math.floor(credit.totalRemaining / preset.creditsPerLecture)}강의 (현재 잔액 기준 추정)`
-                : '강의 수 추정치는 설정이 준비되면 표시해요.'}
+                ? `이번 달 약 ${Math.floor(credit.totalRemaining / preset.creditsPerLecture)}강의 (현재 크레딧 기준 추정)`
+                : '설정을 불러오면 강의 수 추정치를 표시해요.'}
             </p>
             <a className="button primary" href="#/">
               내 강의로 시작하기
@@ -165,9 +165,9 @@ export function Setup({ onKeyChange }: { onKeyChange: () => void }) {
         )}
       </section>
       <p className="muted">
-        업로드한 파일은 처리를 위해 ChatKHU(운영: 마인드로직)로 전송되며 다른 곳으로 보내지 않아요.
-        학습 기록은 이 브라우저에 저장돼요. 브라우저 데이터를 지우면 기록도 사라지므로 백업해
-        주세요.
+        올린 파일은 강의를 정리할 때만 ChatKHU(운영: 마인드로직)로 보내고 다른 곳으로는 보내지
+        않아요. 학습 기록은 이 브라우저에 저장돼요. 브라우저 데이터를 지우면 기록도 사라지니 미리
+        백업해 주세요.
       </p>
       <button
         onClick={() =>
@@ -208,7 +208,7 @@ export function SettingsPage({ onKeyChange }: { onKeyChange: () => void }) {
       <h1>설정과 백업</h1>
       <Guide
         what="내게 맞는 정리 방식을 골라 주세요."
-        why="이용 잔액과 원하는 정리 수준에 맞춰 선택할 수 있어요."
+        why="남은 크레딧과 원하는 정리 수준에 맞춰 선택할 수 있어요."
         tip="먼저 기본으로 시작하고, 필요한 경우에만 세부 설정을 바꾸세요."
       />
       <h2>정리 방식</h2>
@@ -229,8 +229,8 @@ export function SettingsPage({ onKeyChange }: { onKeyChange: () => void }) {
         ))}
       </div>
       <p className="muted">
-        크레딧은 실제 분량에 따라 달라지는 추정치예요. 추정 기준: 2026-10-29 ChatKHU 사용량·단가
-        확인. 세부 모델을 바꾸면 위 추정치와 달라질 수 있어요.
+        예상 크레딧은 실제 분량에 따라 달라지는 추정치예요. 2026-10-29 ChatKHU 사용량·단가를
+        기준으로 계산했으며, 세부 모델을 바꾸면 달라질 수 있어요.
       </p>
       <details className="card">
         <summary>고급 설정 · 역할별 AI 선택</summary>
@@ -279,7 +279,7 @@ export function SettingsPage({ onKeyChange }: { onKeyChange: () => void }) {
             change({ ...settings, outputLanguage: e.target.value as Settings['outputLanguage'] })
           }
         >
-          <option value="ko">한국어 (영어 용어 병기)</option>
+          <option value="ko">한국어 (영어 용어 함께 표기)</option>
           <option value="en">영어</option>
         </select>
       </label>
@@ -330,8 +330,8 @@ export function SettingsPage({ onKeyChange }: { onKeyChange: () => void }) {
           <aside className="notice">
             <p>
               과목 {pending.bundle.courses.length}개, 강의 {pending.bundle.lectures.length}개를
-              가져옵니다. <strong>현재 학습 기록 전체를 이 백업으로 바꿔요.</strong> 먼저 현재
-              기록을 백업해 주세요.
+              가져와요. <strong>현재 학습 기록 전체를 이 백업으로 바꿔요.</strong> 먼저 현재 기록을
+              백업해 주세요.
             </p>
             <div className="actions">
               <button
@@ -340,11 +340,11 @@ export function SettingsPage({ onKeyChange }: { onKeyChange: () => void }) {
                   void task.run(async () => {
                     await store.importBundle(pending.bundle, pending.files);
                     setPending(undefined);
-                    task.setMessage('백업의 학습 기록으로 바꿨어요.');
+                    task.setMessage('백업 파일의 학습 기록으로 바꿨어요.');
                   })
                 }
               >
-                현재 기록을 바꾸고 가져오기
+                기록 바꾸고 가져오기
               </button>
               <button onClick={() => setPending(undefined)}>취소</button>
             </div>

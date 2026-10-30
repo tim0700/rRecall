@@ -35,7 +35,7 @@ async function pause(ms: number, signal?: AbortSignal): Promise<void> {
     const abort = () => {
       clearTimeout(timer);
       signal?.removeEventListener('abort', abort);
-      reject(new DOMException('요청을 취소했어요.', 'AbortError'));
+      reject(new DOMException('작업을 취소했어요.', 'AbortError'));
     };
     const timer = setTimeout(() => {
       signal?.removeEventListener('abort', abort);
